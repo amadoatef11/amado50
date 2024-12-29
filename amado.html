@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الأسئلة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .question-container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+
+        .question {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .options {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .options label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        #submit {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #submit:hover {
+            background-color: #138496;
+        }
+
+        .correct-answer {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="question-container">
+        <h1>لعبة الأسئلة</h1>
+        <div id="questions"></div>
+        <button id="submit" onclick="submitAnswers()">Submit</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "ما هي عاصمة مصر؟",
+                options: ["القاهرة", "الجيزة", "الإسكندرية", "بورسعيد"],
+                answer: 0
+            },
+            {
+                question: "ما هو أكبر كوكب في المجموعة الشمسية؟",
+                options: ["الأرض", "المريخ", "المشتري", "الزهرة"],
+                answer: 2
+            },
+            {
+                question: "من هو مخترع المصباح الكهربائي؟",
+                options: ["أديسون", "آينشتاين", "نيوتن", "بيل"],
+                answer: 0
+            }
+        ];
+
+        function renderQuestions() {
+            const questionsContainer = document.getElementById("questions");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.className = "question-block";
+                questionDiv.innerHTML = `
+                    <div class="question">${index + 1}. ${q.question}</div>
+                    <div class="options">
+                        ${q.options
+                            .map(
+                                (option, i) => `
+                                    <label>
+                                        <input type="radio" name="question-${index}" value="${i}">
+                                        ${option}
+                                    </label>
+                                `
+                            )
+                            .join("")}
+                    </div>
+                    <div class="correct-answer" id="correct-answer-${index}" style="display: none;">
+                        الإجابة الصحيحة: <span>${q.options[q.answer]}</span>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        function submitAnswers() {
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                const correctAnswerDiv = document.getElementById(`correct-answer-${index}`);
+
+                if (selectedOption) {
+                    const userAnswer = parseInt(selectedOption.value);
+                    if (userAnswer !== q.answer) {
+                        correctAnswerDiv.style.display = "block"; // Show the correct answer for wrong ones
+                    } else {
+                        correctAnswerDiv.style.display = "none"; // Hide the correct answer if correct
+                    }
+                } else {
+                    correctAnswerDiv.style.display = "block"; // Show the correct answer if no answer selected
+                }
+            });
+
+            const score = questions.filter((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                return selectedOption && parseInt(selectedOption.value) === q.answer;
+            }).length;
+
+            alert(`النتيجة النهائية: ${score}/${questions.length}`);
+        }
+
+        window.onload = renderQuestions;
+    </script>
+</body>
+</html>
